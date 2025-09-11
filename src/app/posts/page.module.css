@@ -1,0 +1,63 @@
+.main {
+  padding: 2rem;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.listItem {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.itemTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.itemDescription {
+  margin: 0.5rem 0;
+}
+
+.itemMeta {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.pageButton {
+  padding: 0.5rem 0.8rem;
+  background: #0070f3;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.pageButton:hover {
+  background: #005bb5;
+}
+
+.activePage {
+  background: #ff6600;
+  font-weight: bold;
+}
