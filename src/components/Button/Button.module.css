@@ -50,6 +50,18 @@
     width: 100%;
 }
 
+.actionTransparent {
+  background: transparent; /* fundo transparente */
+  color: #333; /* cor do texto ou ícone */
+  border: none; /* sem borda */
+  padding: 0.25rem 0.5rem; /* ajuste se quiser */
+}
+
+.actionTransparent:hover {
+  background: rgba(0,0,0,0.05); /* efeito sutil ao passar mouse */
+}
+
+
 @media (max-width: 768px) {
     .button {
         padding: 10px 20px;

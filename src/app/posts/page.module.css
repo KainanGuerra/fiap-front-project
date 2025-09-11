@@ -61,3 +61,20 @@
   background: #ff6600;
   font-weight: bold;
 }
+
+.postHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.postFooter {
+  display: flex;
+  justify-content: flex-end; /* botão no canto direito */
+}

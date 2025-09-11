@@ -4,7 +4,7 @@ import styles from './Button.module.css';
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  variant: 'primary' | 'cta' | 'action' | 'secondary';
+  variant: 'primary' | 'cta' | 'action' | 'secondary' | 'actionTransparent';
   type?: 'button' | 'submit' | 'reset';
   fullWidth?: boolean;
 }
