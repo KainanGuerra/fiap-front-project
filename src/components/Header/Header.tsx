@@ -1,7 +1,11 @@
+'use client';
+
+import { useAuth } from '../Contexts/AuthContext';
 import Link from 'next/link';
 import Logo from '../Logo/Logo';
 import Button from '../Button/Button';
 import styles from './Header.module.css';
+
 
 const UserIcon = () => (
     <svg 
@@ -21,19 +25,33 @@ const UserIcon = () => (
 );
 
 const Header = () => {
+  const { isLoggedIn, logout } = useAuth();
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <Link href="/">
           <Logo />
         </Link>
+        {isLoggedIn ? (
+            <Link href="/posts">Listagem Posts</Link>
+          ) : (
+            <Link href="/login">Listagem Posts</Link>
+          )}
         <nav>
+          {isLoggedIn ? (
+            <Button variant="secondary" onClick={logout}>
+              <UserIcon />
+              Sair
+              </Button>
+          ) : (
           <Link href="/login">
             <Button variant="primary">
               <UserIcon />
               Entrar
             </Button>
           </Link>
+          )}
         </nav>
       </div>
     </header>
