@@ -1,4 +1,4 @@
-import { getPosts } from "./api";
+import { getPosts } from "../lib/api";
 import PostsPage from "./PostsPage";
 import styles from "./page.module.css";
 import Header from "@/components/Header/Header";

@@ -5,7 +5,7 @@ import PostCard from "./PostCard";
 import Pagination from "./Pagination";
 import { Post } from "./types";
 import styles from "./page.module.css";
-import { updatePost } from "./api";
+import { updatePost } from "../lib/api";
 
 type Props = {
   initialPosts: Post[];
@@ -16,13 +16,16 @@ export default function PostsPage({ initialPosts }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [professorLogado, setProfessorLogado] = useState<string>(""); // token do professor
   const postsPerPage = 10;
-/*
-  // Pega o token do professor logado no client
-  useEffect(() => {
-    const token = localStorage.getItem("token") || "";
-    setProfessorLogado(token);
+
+   useEffect(() => {
+    // Recupera do localStorage
+    const user = localStorage.getItem("user");
+    if (user) {
+      const parsed = JSON.parse(user);
+      setProfessorLogado(parsed.id); // ou parsed.name, depende do que vai comparar
+    }
   }, []);
-*/
+
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
   const currentPosts = posts.slice(indexOfFirst, indexOfLast);

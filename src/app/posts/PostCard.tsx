@@ -19,14 +19,17 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
   const [aviso, setAviso] = useState(""); // mensagem de aviso quando não autorizado
 
   const abrirModal = () => {
-    /*
+    
     if (post.user.id !== professorLogado) {
       console.log("Tentativa de edição por:", professorLogado, "dono do post:", post.user.id);
       setAviso("Você não tem permissão para editar este post.");
       return;
     }
     setAviso(""); 
-    */// Verificação de permissão desativada temporariamente
+    // Verificação de permissão desativada temporariamente
+
+    console.log("Edição permitida para:", professorLogado);
+
     setIsModalOpen(true);
   };
 
