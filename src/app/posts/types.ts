@@ -1,5 +1,6 @@
 export type User = {
   name: string;
+//  id: string;
 };
 
 export type Post = {
