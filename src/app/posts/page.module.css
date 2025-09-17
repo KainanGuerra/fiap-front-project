@@ -90,6 +90,13 @@
   justify-content: flex-end; /* botão no canto direito */
 }
 
+.headerPosts {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
 .modalOverlay {
   position: fixed;
   inset: 0;

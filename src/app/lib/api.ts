@@ -1,4 +1,5 @@
 import { Post } from "../posts/types";
+import { validarFormulario } from "@/components/Format/format";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/fiap/v1";
 
@@ -56,10 +57,23 @@ export async function getPosts(postsPerPage = 15): Promise<Post[]> {
 
 export async function updatePost(post: Post): Promise<Post | null> {
   try {
+
+    //Validação
+    const erros = validarFormulario({ titulo: post.title, conteudo: post.content });
+    if (Object.keys(erros).length > 0) {
+      console.error("Erros de validação:", erros);
+      return null; // ou você pode lançar um erro ou retornar os erros
+    }
+
+    // Pega o item do localStorage
+    const authString = localStorage.getItem("auth");
+    const auth = authString ? JSON.parse(authString) : null;
+    const token = auth?.token;
+
     const res = await fetch(`${API_URL}/posts/${post.id}`, {
-      method: "PATCH", 
+      method: "PATCH",
       headers: {
-        "Authorization": "Bearer " + process.env.NEXT_PUBLIC_BEARER_TOKEN || "",
+        "Authorization": "Bearer " + token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -68,19 +82,20 @@ export async function updatePost(post: Post): Promise<Post | null> {
       }),
     });
 
-    if (!res.ok) { 
+    if (!res.ok) {
+      console.log(token)
       console.error("Erro ao atualizar post:", res.status);
       return null;
     }
 
     const data = await res.json();
-    
+
     return {
       id: data.id,
       title: data.title,
       content: data.content,
       createdAt: data.createdAt,
-      user: { name: data.user?.name || "Professor Desconhecido",  id: data.user?.id || "" },
+      user: { name: data.user?.name || "Professor Desconhecido", id: data.user?.id || "" },
     };
   } catch (error) {
     console.error("Falha ao atualizar post:", error);
@@ -88,28 +103,67 @@ export async function updatePost(post: Post): Promise<Post | null> {
   }
 }
 
-export async function loginAPI(username: string, password: string) {
+export async function loginAPI(email: string, password: string) {
   try {
-    const res = await fetch(`${API_URL}/auth`, {
-      method: "GET", // ou POST dependendo da sua API
-      headers: {
-        "Content-Type": "application/json",
-        "inner-authorization": process.env.NEXT_PUBLIC_API_KEY || "",
-      },
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!res.ok) throw new Error("Erro na API");
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      return { success: false, message: errorData?.message || "Usuário ou senha incorretos" };
+    }
 
-    const users = await res.json();
-    const userFound = users.find(
-      (u: { username: string; password: string }) =>
-        u.username === username && u.password === password
-    );
-
-    if (userFound) return { success: true, user: userFound };
-    return { success: false, message: "Usuário ou senha incorretos" };
-  } catch (err) {
-    console.error(err);
+    const data = await res.json();
+    console.log("LoginAPI response data:", data);
+    return { success: true, user: data.user, accessToken: data.accessToken };
+  } catch (err: any) {
+    console.error("LoginAPI error:", err);
     return { success: false, message: "Erro ao conectar à API" };
   }
+}
+
+export interface CreatePostData {
+  title: string;
+  content: string;
+}
+
+export async function createPost(postData: CreatePostData) {
+  try {
+    //Validação
+    const erros = validarFormulario({ titulo: postData.title, conteudo: postData.content });
+    if (Object.keys(erros).length > 0) {
+      console.error("Erros de validação:", erros);
+      return null; ///// Criar Popup de erro
+    }
+
+    const authString = localStorage.getItem("auth");
+    const auth = authString ? JSON.parse(authString) : null;
+    const token = auth?.token;
+
+    const response = await fetch(`${API_URL}/posts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(postData),
+    });
+
+    if (!response.ok) throw new Error('Erro ao enviar o post ' + response.statusText);
+
+    const data = await response.json();
+    console.log("Token API:", token)
+
+    if (response.ok) { console.log('Post enviado com sucesso:', data);}
+    
+    return data;
+
+  } catch (error) {
+    console.error(error);
+    alert('Ocorreu um erro ao enviar o post.');
+  }
+
 }
