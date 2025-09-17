@@ -36,7 +36,6 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Tentando logar:", { username, password });
 
     let valid = true;
     const newErrors = { username: "", password: "" };
@@ -45,30 +44,31 @@ export default function LoginForm() {
       newErrors.username = "Por favor, digite seu usuário";
       valid = false;
     }
-
     if (!password.trim()) {
       newErrors.password = "Por favor, digite sua senha";
       valid = false;
     }
-
     setErrors(newErrors);
     if (!valid) return;
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await loginAPI(username, password);
 
-      const data = await res.json();
-
-      if (data.success) {
+      if (res.success) {
         login();
-        localStorage.setItem("user", JSON.stringify(data.user));
-        router.push("/");
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({ user: res.user, token: res.accessToken })
+        );
+        
+
+        const auth = JSON.parse(localStorage.getItem("auth") || "{}");
+        console.log("Dados armazenados no localStorage:", auth);
+        console.log("BearerToken armazenado:", auth.token);
+
+        router.back();
       } else {
-        setErrors({ username: "", password: data.message || "Erro ao logar" });
+        setErrors({ username: "", password: res.message || "Erro ao logar" });
       }
     } catch (err) {
       console.error(err);

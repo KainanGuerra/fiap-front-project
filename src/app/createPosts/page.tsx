@@ -1,64 +1,46 @@
-// Formulario.tsx
 "use client"
 
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/Button/Button';
-
-interface UserRole {
-  id: number;
-  name: string;
-  role: string;
-}
+import { createPost } from '../lib/api';
 
 const Formulario: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [roles, setRoles] = useState<UserRole[]>([]);
-  const [selectedRole, setSelectedRole] = useState<number | undefined>(undefined);
+  const [email, setEmail] = useState(''); // novo estado para email
+  const [token, setToken] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3000/fiap/v1/posts')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setRoles(data);
-        } else if (Array.isArray(data.users)) {
-          setRoles(data.users);
-        } else {
-          console.error('Formato de dados inesperado', data);
-        }
-      })
-      .catch(err => console.error(err));
+    // Busca o user do localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setEmail(parsedUser.email || ""); 
+        setToken(parsedUser.id || "");
+      } catch (error) {
+        console.error("Erro ao parsear user do localStorage:", error);
+      }
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você pode fazer o POST para sua API
 
-    const postData = { title, content, roleId: selectedRole || "PROFESSOR" };
     try {
-      const response = await fetch("http://localhost:3000/fiap/v1/posts", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData),
-      });
-
-      if (!response.ok) throw new Error('Erro ao enviar o post ' + response.statusText);
-
-      const data = await response.json();
-      console.log('Post enviado com sucesso:', data);
-
-      // Resetar form
-      setTitle('');
-      setContent('');
-      setSelectedRole(undefined);
-
-      alert('Post enviado com sucesso!');
+      const postData = { title, content };
+      const newPost = await createPost(postData);
+      console.log("Dados do post enviados:", postData);
+      console.log("Token recebido? " + token);
+      console.log("Post criado:", newPost);
+      setTitle("");
+      setContent("");
     } catch (error) {
-      console.error(error);
-      alert('Ocorreu um erro ao enviar o post.');
+      alert("Ocorreu um erro ao enviar o post.");
     }
+
+
   };
 
   return (
@@ -66,44 +48,46 @@ const Formulario: React.FC = () => {
       <div className={styles.loginCard}>
         <h2 className={styles.title}>Criar Post</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
+
+          {/* Campo de email desabilitado */}
+          <div className={styles.inputGroup}>
+            <input
+              className={styles.input}
+              type="email"
+              placeholder="Email do professor"
+              value={email}
+              disabled
+            />
+          </div>
+
           <div className={styles.inputGroup}>
             <input
               className={styles.input}
               type="text"
-              placeholder="Titulo"
+              placeholder="Título"
               value={title}
               onChange={e => setTitle(e.target.value)}
             />
           </div>
 
           <div className={styles.inputGroup}>
-            <input
+            <textarea
               className={styles.input}
-              type="text"
-              placeholder="Conteudo"
+              placeholder="Conteúdo"
               value={content}
               onChange={e => setContent(e.target.value)}
+              rows={4}
             />
           </div>
-          
-            <Button
-              variant="primary"
-              type="submit"
-              onClick={() => {
-                console.log({ title, content, selectedRole });
-                // Aqui você pode fazer o POST para sua API
-              }}
-            >
+
+          <div className={styles.buttonGroup}>
+            <Button variant="primary" type="submit">
               Enviar
             </Button>
-
-            <Button
-              variant="secondary"
-              onClick={() => {}}
-            >
+            <Button variant="secondary" onClick={() => history.back()}>
               Voltar
             </Button>
-          
+          </div>
         </form>
       </div>
     </div>

@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 interface PostCardProps {
   post: Post;
   onSave?: (postAtualizado: Post) => void;
-  professorLogado: string; // nome do professor atual ou id único
+  professorLogado: string;
 }
 
 export default function PostCard({ post, onSave, professorLogado }: PostCardProps) {
@@ -16,7 +16,7 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
   const [titulo, setTitulo] = useState(post.title);
   const [conteudo, setConteudo] = useState(post.content);
   const [erro, setErro] = useState<{ titulo?: string; conteudo?: string }>({});
-  const [aviso, setAviso] = useState(""); // mensagem de aviso quando não autorizado
+  const [aviso, setAviso] = useState("");
 
   const abrirModal = () => {
     
@@ -26,7 +26,6 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
       return;
     }
     setAviso(""); 
-    // Verificação de permissão desativada temporariamente
 
     console.log("Edição permitida para:", professorLogado);
 

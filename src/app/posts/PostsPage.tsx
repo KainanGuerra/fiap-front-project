@@ -6,6 +6,8 @@ import Pagination from "./Pagination";
 import { Post } from "./types";
 import styles from "./page.module.css";
 import { updatePost } from "../lib/api";
+import Button from "@/components/Button/Button";
+import { useRouter } from "next/navigation";
 
 type Props = {
   initialPosts: Post[];
@@ -29,6 +31,7 @@ export default function PostsPage({ initialPosts }: Props) {
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
   const currentPosts = posts.slice(indexOfFirst, indexOfLast);
+  const router = useRouter();
 
   const handleSavePost = async (postAtualizado: Post) => {
     try {
@@ -44,6 +47,14 @@ export default function PostsPage({ initialPosts }: Props) {
 
   return (
     <>
+    <div className={styles.headerPosts}>
+        <Button
+          variant="action"
+          onClick={() => router.push("/createposts")} // caminho da página de criação
+        >
+          Criar Postagem
+        </Button>
+      </div>
       <ul className={styles.list}>
         {currentPosts.map((post) => (
           <PostCard
