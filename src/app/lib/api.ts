@@ -62,7 +62,6 @@ export async function updatePost(post: Post): Promise<Post | null> {
     const erros = validarFormulario({ titulo: post.title, conteudo: post.content });
     if (Object.keys(erros).length > 0) {
       console.error("Erros de validação:", erros);
-      return null; // ou você pode lançar um erro ou retornar os erros
     }
 
     // Pega o item do localStorage
@@ -135,8 +134,8 @@ export async function createPost(postData: CreatePostData) {
     //Validação
     const erros = validarFormulario({ titulo: postData.title, conteudo: postData.content });
     if (Object.keys(erros).length > 0) {
-      console.error("Erros de validação:", erros);
-      return null; ///// Criar Popup de erro
+      Object.defineProperty(erros, 'isValidationError', { value: true });
+      return erros;
     }
 
     const authString = localStorage.getItem("auth");
@@ -162,8 +161,8 @@ export async function createPost(postData: CreatePostData) {
     return data;
 
   } catch (error) {
-    console.error(error);
-    alert('Ocorreu um erro ao enviar o post.');
+    console.error("Falha ao atualizar post:", error);
+    throw error;
   }
 
 }

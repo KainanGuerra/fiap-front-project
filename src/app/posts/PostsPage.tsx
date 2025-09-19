@@ -18,9 +18,10 @@ export default function PostsPage({ initialPosts }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [professorLogado, setProfessorLogado] = useState<string>(""); // token do professor
   const postsPerPage = 10;
+  const router = useRouter();
 
-   useEffect(() => {
-    // Recupera do localStorage
+  useEffect(() => {
+    // Recupera usuario do localStorage
     const user = localStorage.getItem("user");
     if (user) {
       const parsed = JSON.parse(user);
@@ -31,7 +32,6 @@ export default function PostsPage({ initialPosts }: Props) {
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
   const currentPosts = posts.slice(indexOfFirst, indexOfLast);
-  const router = useRouter();
 
   const handleSavePost = async (postAtualizado: Post) => {
     try {
@@ -47,10 +47,10 @@ export default function PostsPage({ initialPosts }: Props) {
 
   return (
     <>
-    <div className={styles.headerPosts}>
+      <div className={styles.headerPosts}>
         <Button
           variant="action"
-          onClick={() => router.push("/createposts")} // caminho da página de criação
+          onClick={() => router.push("/createPosts")} // caminho da página de criação
         >
           Criar Postagem
         </Button>
@@ -61,7 +61,7 @@ export default function PostsPage({ initialPosts }: Props) {
             key={post.id}
             post={post}
             onSave={handleSavePost}
-            professorLogado={professorLogado} // token logado
+            professorLogado={professorLogado}
           />
         ))}
       </ul>

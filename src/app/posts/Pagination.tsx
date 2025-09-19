@@ -21,7 +21,9 @@ export default function Pagination({ totalPosts, postsPerPage, currentPage, onPa
       {pageNumbers.map((num) => (
         <Button
           key={num}
-          onClick={() => onPageChange(num)}
+          onClick={() => {
+            onPageChange(num)
+          }}
           variant={num === currentPage ? "cta" : "primary"} // destaque para página atual
         >
           {num}
