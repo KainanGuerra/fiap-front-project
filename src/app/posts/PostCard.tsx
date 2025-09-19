@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Post } from "./types";
 import Button from "@/components/Button/Button";
 import styles from "./page.module.css";
+import { validarFormulario } from "@/components/Format/format";
 
 interface PostCardProps {
   post: Post;
@@ -19,7 +20,6 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
   const [aviso, setAviso] = useState("");
 
   const abrirModal = () => {
-    
     if (post.user.id !== professorLogado) {
       console.log("Tentativa de edição por:", professorLogado, "dono do post:", post.user.id);
       setAviso("Você não tem permissão para editar este post.");
@@ -33,13 +33,8 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
   };
 
   const salvarEdicao = () => {
-    const novoErro: typeof erro = {};
-    if (titulo.trim().length < 3) {
-      novoErro.titulo = "O título deve ter pelo menos 3 caracteres.";
-    }
-    if (conteudo.trim().length < 10) {
-      novoErro.conteudo = "O conteúdo deve ter pelo menos 10 caracteres.";
-    }
+    const novoErro = validarFormulario({ titulo, conteudo });
+
     if (Object.keys(novoErro).length > 0) {
       setErro(novoErro);
       return;
@@ -99,12 +94,13 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
             {erro.conteudo && <p className={styles.errorMessage}>{erro.conteudo}</p>}
 
             <div className={styles.modalActions}>
-              <Button variant="cta" onClick={salvarEdicao}>
+              <Button variant="action" onClick={salvarEdicao}>
                 Salvar
               </Button>
               <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
-                Cancelar
+                Cancelar 
               </Button>
+              <Button variant="cta" onClick={() => {}}>Excluir</Button>
             </div>
           </div>
         </div>

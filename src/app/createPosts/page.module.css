@@ -95,3 +95,22 @@
   font-size: 14px;
   color: #666;
 }
+
+/* Borda vermelha em caso de erro */
+.errorBorder {
+  border-color: red;
+}
+
+/* Mensagem de erro */
+.errorMessage {
+  color: red;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8rem;
+  justify-content: center;
+  width: 100%;
+}
