@@ -55,7 +55,7 @@ export default function LoginForm() {
       const res = await loginAPI(username, password);
 
       if (res.success) {
-        login();
+        login(username, password);
         localStorage.setItem(
           "auth",
           JSON.stringify({ user: res.user, token: res.accessToken })
