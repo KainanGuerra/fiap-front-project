@@ -9,45 +9,42 @@ import { validarFormulario } from "@/components/Format/format";
 interface PostCardProps {
   post: Post;
   onSave?: (postAtualizado: Post) => void;
+  onDelete: (id: string) => void;
   professorLogado: string;
 }
 
-export default function PostCard({ post, onSave, professorLogado }: PostCardProps) {
+export default function PostCard({ post, onSave, onDelete, professorLogado }: PostCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [titulo, setTitulo] = useState(post.title);
   const [conteudo, setConteudo] = useState(post.content);
   const [erro, setErro] = useState<{ titulo?: string; conteudo?: string }>({});
   const [aviso, setAviso] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false); // controle do confirm interno
 
   const abrirModal = () => {
     if (post.user.id !== professorLogado) {
-      console.log("Tentativa de edição por:", professorLogado, "dono do post:", post.user.id);
       setAviso("Você não tem permissão para editar este post.");
       return;
     }
-    setAviso(""); 
-
-    console.log("Edição permitida para:", professorLogado);
-
+    setAviso("");
     setIsModalOpen(true);
   };
 
   const salvarEdicao = () => {
     const novoErro = validarFormulario({ titulo, conteudo });
-
     if (Object.keys(novoErro).length > 0) {
       setErro(novoErro);
       return;
     }
     setErro({});
-
-    const atualizado: Post = {
-      ...post,
-      title: titulo,
-      content: conteudo,
-    };
-
+    const atualizado: Post = { ...post, title: titulo, content: conteudo };
     onSave?.(atualizado);
+    setIsModalOpen(false);
+  };
+
+  const confirmarExclusao = () => {
+    onDelete(post.id);
+    setShowConfirm(false);
     setIsModalOpen(false);
   };
 
@@ -55,21 +52,15 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
     <li className={styles.listItem}>
       <h3 className={styles.itemTitle}>{post.title}</h3>
       <p className={styles.itemDescription}>{post.content}</p>
-      <p className={styles.itemMeta}>
-        Criado em: {new Date(post.createdAt).toLocaleDateString("pt-BR")}
-      </p>
+      <p className={styles.itemMeta}>Criado em: {new Date(post.createdAt).toLocaleDateString("pt-BR")}</p>
       <p className={styles.itemMeta}>Professor: {post.user.name}</p>
 
       <div className={styles.postFooter}>
-        <Button variant="actionTransparent" onClick={abrirModal}>
-          ⋯
-        </Button>
+        <Button variant="actionTransparent" onClick={abrirModal}>⋯</Button>
       </div>
 
-      {/* Aviso de permissão */}
       {aviso && <p className={styles.errorMessage}>{aviso}</p>}
 
-      {/* Modal */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
@@ -94,14 +85,24 @@ export default function PostCard({ post, onSave, professorLogado }: PostCardProp
             {erro.conteudo && <p className={styles.errorMessage}>{erro.conteudo}</p>}
 
             <div className={styles.modalActions}>
-              <Button variant="action" onClick={salvarEdicao}>
-                Salvar
-              </Button>
-              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
-                Cancelar 
-              </Button>
-              <Button variant="cta" onClick={() => {}}>Excluir</Button>
+              <Button variant="action" onClick={salvarEdicao}>Salvar</Button>
+              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
+              <Button variant="cta" onClick={() => setShowConfirm(true)}>Excluir</Button>
             </div>
+
+            {/* Mini-modal de confirmação */}
+            {showConfirm && (
+              <div className={styles.confirmOverlay}>
+                <div className={styles.confirmBox}>
+                  <p>Tem certeza que deseja excluir o post "{post.title}"?</p>
+                  <div className={styles.modalConfirmExclude}>
+                    <Button variant="cta" onClick={confirmarExclusao}>Confirmar</Button>
+                    <Button variant="secondary" onClick={() => setShowConfirm(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       )}
