@@ -4,12 +4,12 @@
 
 
 .title {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 2.8rem;
-    font-weight: 700;
-    line-height: 1.2;
-    color: rgb(38 14 105);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: rgb(38 14 105);
 }
 
 .list {
@@ -55,6 +55,14 @@
   flex-wrap: wrap;
 }
 
+.searchInput {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 1rem;
+  width: 100rem;
+}
+
 .pageButton {
   padding: 0.5rem 0.8rem;
   background: #0070f3;
@@ -87,12 +95,13 @@
 
 .postFooter {
   display: flex;
-  justify-content: flex-end; /* botão no canto direito */
+  justify-content: flex-end;
+  /* botão no canto direito */
 }
 
 .headerPosts {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
@@ -135,6 +144,32 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+.modalConfirmExclude {
+  display: flex; 
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.confirmOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.confirmBox {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
 }
 
 /* Borda vermelha em caso de erro */

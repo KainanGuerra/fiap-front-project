@@ -166,3 +166,31 @@ export async function createPost(postData: CreatePostData) {
   }
 
 }
+
+export async function deletePost(id: string): Promise<boolean> {
+  try {
+    // Pega o token do localStorage
+    const authString = localStorage.getItem("auth");
+    const auth = authString ? JSON.parse(authString) : null;
+    const token = auth?.token;
+
+    const res = await fetch(`${API_URL}/posts/${id}/remove`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ deleted: true }), // se a API espera flag de exclusão
+    });
+
+    if (!res.ok) {
+      console.error("Erro ao excluir post:", res.status);
+      return false;
+    }
+
+    return true; // sucesso
+  } catch (error) {
+    console.error("Falha ao excluir post:", error);
+    return false;
+  }
+}
