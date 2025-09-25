@@ -10,19 +10,17 @@ export default function Formulario() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [email, setEmail] = useState('');
-    const [token, setToken] = useState('');
     const [erro, setErro] = useState<{ titulo?: string; conteudo?: string }>({});
     const [successMessage, setSuccessMessage] = useState('');
     const router = useRouter();
 
     useEffect(() => {
         // Busca o user do localStorage
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
+        const bearerstoredUser = localStorage.getItem("auth"); 
+        if (bearerstoredUser) {
             try {
-                const parsedUser = JSON.parse(storedUser);
-                setEmail(parsedUser.email || "");
-                setToken(parsedUser.id || "");
+                const parsedUser = JSON.parse(bearerstoredUser);
+                setEmail(parsedUser.user.email || "");
             } catch (error) {
                 console.error("Erro ao parsear user do localStorage:", error);
             }

@@ -88,7 +88,10 @@ export default function PostsPage({ initialPosts }: Props) {
 
         <Button
           variant="action"
-          onClick={() => router.push("/createPosts")} // caminho da página de criação
+          onClick={() => {router.push("/createPosts")
+            const id = localStorage.getItem("auth");
+            console.log("auth", id);
+          }} // caminho da página de criação
         >
           Criar Postagem
         </Button>
