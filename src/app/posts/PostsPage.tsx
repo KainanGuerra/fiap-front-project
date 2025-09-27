@@ -1,29 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Post } from "./types";
+import Button from "@/components/Button/Button";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
-import { Post } from "./types";
+import { updatePost, deletePost, getPosts } from "../lib/api";
 import styles from "./page.module.css";
-import { updatePost, deletePost } from "../lib/api";
-import Button from "@/components/Button/Button";
-import { useRouter } from "next/navigation";
+import { clear } from "console";
 
-type Props = {
-  initialPosts: Post[];
-};
-
-export default function PostsPage({ initialPosts }: Props) {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+export default function PostsPage() {
+  const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [professorLogado, setProfessorLogado] = useState<string>(""); // token do professor
-  const [searchTerm, setSearchTerm] = useState(""); // valor digitado na caixa de busca
-  const [debouncedSearch, setDebouncedSearch] = useState(""); // valor final após debounce
+  const [professorLogado, setProfessorLogado] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
   const postsPerPage = 10;
   const router = useRouter();
 
+  // Recupera usuário do localStorage
   useEffect(() => {
-    // Recupera usuario do localStorage
     const user = localStorage.getItem("user");
     if (user) {
       const parsed = JSON.parse(user);
@@ -31,37 +31,61 @@ export default function PostsPage({ initialPosts }: Props) {
     }
   }, []);
 
+  // Debounce da busca
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler); // limpa o timeout se o usuário digitar de novo
-    };
+    const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+    return () => clearTimeout(handler);
   }, [searchTerm]);
 
+  // Fetch posts sempre que currentPage ou debouncedSearch mudarem
   useEffect(() => {
-    setCurrentPage(1); // volta para a primeira página quando a busca mudar
-  }, [debouncedSearch]);
+    const controller = new AbortController();
 
-  // Filtra posts com base no termo buscado
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-    post.user.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
+    const fetchPosts = async () => {
+      setLoading(true);
+      const timeout = setTimeout(() => setShowLoading(true), 500);
 
-  const indexOfLast = currentPage * postsPerPage;
-  const indexOfFirst = indexOfLast - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirst, indexOfLast);
+      try {
+        const normalizedTerm =
+          debouncedSearch && debouncedSearch.length >= 3
+            ? debouncedSearch.trim().toLowerCase()
+            : "";
+            
+        const pageToFetch = currentPage;
+
+        const { posts: fetchedPosts, total } = await getPosts(
+          pageToFetch,
+          postsPerPage,
+          normalizedTerm,
+          controller.signal 
+        );
+
+        setPosts(fetchedPosts);
+        setTotalPosts(total);
+      } catch (err) {
+        if ((err as any).name === "AbortError") return;
+        console.error("Erro ao buscar posts:", err);
+      } finally {
+        clearTimeout(timeout);
+        setLoading(false);
+        setShowLoading(false);
+      }
+    };
+
+    fetchPosts();
+
+    return () => controller.abort(); // cancela fetch anterior se efeito rodar de novo
+  }, [currentPage, debouncedSearch]);
+
+  useEffect(() => {
+  if (debouncedSearch) setCurrentPage(1);
+}, [debouncedSearch]);
 
   const handleSavePost = async (postAtualizado: Post) => {
     try {
       const salvo = await updatePost(postAtualizado);
       if (!salvo) return;
-      setPosts((prev) =>
-        prev.map((p) => (p.id === salvo.id ? salvo : p))
-      );
+      setPosts((prev) => prev.map((p) => (p.id === salvo.id ? salvo : p)));
     } catch (error) {
       console.error("Erro ao atualizar post:", error);
     }
@@ -71,33 +95,48 @@ export default function PostsPage({ initialPosts }: Props) {
     try {
       const sucesso = await deletePost(id);
       if (!sucesso) return;
-      setPosts((prev) => prev.filter((p) => p.id !== id));
+
+      const normalizedTerm =
+        debouncedSearch && debouncedSearch.length >= 3
+          ? debouncedSearch.trim().toLowerCase()
+          : "";
+
+      const pageToFetch = normalizedTerm ? 1 : currentPage;
+
+      const { posts: fetchedPosts, total } = await getPosts(
+        pageToFetch,
+        postsPerPage,
+        normalizedTerm
+      );
+
+      setPosts(fetchedPosts);
+      setTotalPosts(total);
+      if (normalizedTerm) setCurrentPage(1);
     } catch (error) {
       console.error("Erro ao excluir post:", error);
     }
   };
 
+  { showLoading && <div>Carregando posts...</div> };
+
   return (
     <>
       <div className={styles.headerPosts}>
-        <input type="text"
+        <input
+          type="text"
           placeholder="Buscar posts..."
           className={styles.searchInput}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} />
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
-        <Button
-          variant="action"
-          onClick={() => {router.push("/createPosts")
-            const id = localStorage.getItem("auth");
-            console.log("auth", id);
-          }} // caminho da página de criação
-        >
+        <Button variant="action" onClick={() => router.push("/createPosts")}>
           Criar Postagem
         </Button>
       </div>
+
       <ul className={styles.list}>
-        {currentPosts.map((post) => (
+        {posts.map((post) => (
           <PostCard
             key={post.id}
             post={post}
@@ -109,7 +148,7 @@ export default function PostsPage({ initialPosts }: Props) {
       </ul>
 
       <Pagination
-        totalPosts={filteredPosts.length}
+        totalPosts={totalPosts}
         postsPerPage={postsPerPage}
         currentPage={currentPage}
         onPageChange={setCurrentPage}

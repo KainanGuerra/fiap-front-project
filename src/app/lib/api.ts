@@ -3,57 +3,54 @@ import { validarFormulario } from "@/components/Format/format";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/fiap/v1";
 
-export async function getPosts(postsPerPage = 15): Promise<Post[]> {
+export async function getPosts(
+  page = 1,
+  postsPerPage = 10,
+  searchTerm: string = "",
+  signal?: AbortSignal
+): Promise<{ posts: Post[]; total: number }> {
   try {
-    // Busca a primeira página para saber o total de páginas
-    const firstRes = await fetch(`${API_URL}/posts?page=1&limit=${postsPerPage}`, {
+    const token = localStorage.getItem("auth")
+      ? JSON.parse(localStorage.getItem("auth") || "").token
+      : "";
+
+    let url = `${API_URL}/posts?page=${page}&limit=${postsPerPage}`;
+    if (searchTerm) {
+      url += `&term=${encodeURIComponent(searchTerm)}`;
+    }
+
+    const res = await fetch(url, {
       headers: {
-        "inner-authorization": process.env.NEXT_PUBLIC_API_KEY || "",
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       cache: "no-store",
+      signal,
     });
 
-    if (!firstRes.ok) {
-      console.error("Erro ao buscar posts:", firstRes.status);
-      return [];
+    if (!res.ok) {
+      console.error("Erro ao buscar posts:", res.status);
+      return { posts: [], total: 0 };
     }
 
-    const firstData = await firstRes.json();
-    const totalPages = firstData.totalPages;
+    const data = await res.json();
 
-    const mapPosts = (docs: any[]): Post[] =>
-      docs.map((p: any) => ({
-        id: p.id,
-        title: p.title,
-        content: p.content,
-        createdAt: p.createdAt,
-        user: { name: p.user?.name || "Professor Desconhecido", id: p.user?.id || "" },
-      }));
+    const mappedPosts: Post[] = data.docs.map((p: any) => ({
+      id: p.id,
+      title: p.title,
+      content: p.content,
+      createdAt: p.createdAt,
+      user: { name: p.user?.name || "Professor Desconhecido", id: p.user?.id || "" },
+    }));
 
-    const allPosts: Post[] = mapPosts(firstData.docs);
-
-    // Gera Promises para todas as páginas restantes
-    const remainingPosts = await Promise.all(
-      Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map((page) =>
-        fetch(`${API_URL}/posts?page=${page}&limit=${postsPerPage}`, {
-          headers: {
-            "inner-authorization": process.env.NEXT_PUBLIC_API_KEY || "",
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        })
-          .then((res) => res.json())
-          .then((data) => mapPosts(data.docs))
-      )
-    );
-
-    return allPosts.concat(...remainingPosts);
+    return { posts: mappedPosts, total: data.totalDocs || data.total || mappedPosts.length };
   } catch (error) {
+    if ((error as any).name === "AbortError") return { posts: [], total: 0 }; // fetch abortado
     console.error("Falha na API:", error);
-    return [];
+    return { posts: [], total: 0 };
   }
 }
+
 
 export async function updatePost(post: Post): Promise<Post | null> {
   try {
@@ -156,8 +153,8 @@ export async function createPost(postData: CreatePostData) {
     const data = await response.json();
     console.log("Token API:", token)
 
-    if (response.ok) { console.log('Post enviado com sucesso:', data);}
-    
+    if (response.ok) { console.log('Post enviado com sucesso:', data); }
+
     return data;
 
   } catch (error) {
