@@ -10,10 +10,6 @@ export default function LoginPage() {
         <Logo />
         <h2 className={styles.title}>Entrar</h2>
        <LoginForm />
-        <div className={styles.signupSection}>
-          <p className={styles.signupText}>Não tem conta?</p>
-          <Button variant="secondary" fullWidth>Inscrever-se</Button>
-        </div>
       </div>
     </main>
   );

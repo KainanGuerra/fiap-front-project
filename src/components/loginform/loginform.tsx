@@ -66,7 +66,7 @@ export default function LoginForm() {
         console.log("Dados armazenados no localStorage:", auth);
         console.log("BearerToken armazenado:", auth.token);
 
-        router.back();
+        router.push("/posts");
       } else {
         setErrors({ username: "", password: res.message || "Erro ao logar" });
       }
