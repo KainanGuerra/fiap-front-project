@@ -33,11 +33,9 @@ const Header = () => {
         <Link href="/">
           <Logo />
         </Link>
-        {isLoggedIn ? (
-            <Link href="/posts">Listagem Posts</Link>
-          ) : (
-            <Link href="/login">Listagem Posts</Link>
-          )}
+        {isLoggedIn && (
+          <Link href="/posts">Listagem de Posts</Link>
+        )}
         <nav>
           {isLoggedIn ? (
             <Button variant="secondary" onClick={logout}>
