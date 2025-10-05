@@ -4,6 +4,11 @@ Front-end desenvolvido em **Next.js** para o projeto tech challenge da FIAP.\
 Este repositório contém a interface do usuário (UI), integrando com a
 API/back-end para exibir e manipular os dados da aplicação.
 
+## 📄 Documentation
+
+For additiona authentication credentials, and business rules, refer to the internal documentation:
+
+🔗 [**Google Docs (Fiap Tech Challenge)**](https://docs.google.com/document/d/1z1TGVuseEpAEH6ZGFzFmyrys5lmMWnv5)
 
 
 ## 🚀 Tecnologias
@@ -11,12 +16,8 @@ API/back-end para exibir e manipular os dados da aplicação.
 -   [Next.js](https://nextjs.org/) -- Framework React para SSR e SSG
 -   [React](https://react.dev/) -- Biblioteca para construção da UI
 -   [TypeScript](https://www.typescriptlang.org/) -- Tipagem estática
--   [Yarn](https://yarnpkg.com/) -- Gerenciador de pacotes
 -   [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) --
     Padrões de código
--   [Docker](https://www.docker.com/) -- Containerização (opcional, se
-    usar)
-
 
 ## 📦 Instalação e uso
 
@@ -30,34 +31,25 @@ cd fiap-front-project
 Instale as dependências:
 
 ``` bash
-yarn install
+npm run install
 ```
 
 Rodar em ambiente de desenvolvimento:
 
 ``` bash
-yarn dev
+npm run dev
 ```
 
 Acesse: <http://localhost:3000>
 
 ------------------------------------------------------------------------
 
-## 🐳 Usando com Docker (opcional)
-
-``` bash
-docker build -t fiap-front-project .
-docker run -p 3000:3000 fiap-front-project
-```
-
-------------------------------------------------------------------------
-
 ## ⚙️ Scripts disponíveis
 
--   `yarn dev` → roda em modo desenvolvimento
--   `yarn build` → gera build de produção
--   `yarn start` → inicia o servidor em produção
--   `yarn lint` → roda o linter
+-   `npm run dev` → roda em modo desenvolvimento
+-   `npm run build` → gera build de produção
+-   `npm run start` → inicia o servidor em produção
+-   `npm run lint` → roda o linter
 
 ------------------------------------------------------------------------
 
