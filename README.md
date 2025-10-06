@@ -4,11 +4,19 @@ Front-end desenvolvido em **Next.js** para o projeto tech challenge da FIAP.\
 Este repositório contém a interface do usuário (UI), integrando com a
 API/back-end para exibir e manipular os dados da aplicação.
 
-## 📄 Documentation
+## 📄 Documentação
 
-For additional information, authentication credentials, and business rules, refer to the internal documentation:
+Para informações adicionais, credenciais de autenticação e regras de negócio, consulte a documentação interna:
 
 🔗 [**Google Docs (Fiap Tech Challenge)**](https://docs.google.com/document/d/1z1TGVuseEpAEH6ZGFzFmyrys5lmMWnv5)
+
+## 🌐 Aplicação em produção
+
+Você pode acessar a aplicação completa em produção no link abaixo:
+
+🔗 [**Vercel**](https://fiap-front-project.vercel.app/)
+
+
 
 
 ## 🚀 Tecnologias
