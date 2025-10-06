@@ -119,6 +119,7 @@ export default function PostsPage() {
 
   { showLoading && <div>Carregando posts...</div> };
 
+  const user = JSON.parse(localStorage.getItem("auth") as string).user;
   return (
     <>
       <div className={styles.headerPosts}>
@@ -129,10 +130,11 @@ export default function PostsPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
+      {user?.role === "PROFESSOR" && (
         <Button variant="action" onClick={() => router.push("/createPosts")}>
           Criar Postagem
         </Button>
+      )}
       </div>
 
       <ul className={styles.list}>

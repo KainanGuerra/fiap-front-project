@@ -1,7 +1,7 @@
 import { Post } from "../posts/types";
 import { validarFormulario } from "@/components/Format/format";
+import { BASE_API } from "./config";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/fiap/v1";
 
 export async function getPosts(
   page = 1,
@@ -14,7 +14,7 @@ export async function getPosts(
       ? JSON.parse(localStorage.getItem("auth") || "").token
       : "";
 
-    let url = `${API_URL}/posts?page=${page}&limit=${postsPerPage}`;
+    let url = `${BASE_API}/posts?page=${page}&limit=${postsPerPage}`;
     if (searchTerm) {
       url += `&term=${encodeURIComponent(searchTerm)}`;
     }
@@ -66,7 +66,7 @@ export async function updatePost(post: Post): Promise<Post | null> {
     const auth = authString ? JSON.parse(authString) : null;
     const token = auth?.token;
 
-    const res = await fetch(`${API_URL}/posts/${post.id}`, {
+    const res = await fetch(`${BASE_API}/posts/${post.id}`, {
       method: "PATCH",
       headers: {
         "Authorization": "Bearer " + token,
@@ -101,7 +101,7 @@ export async function updatePost(post: Post): Promise<Post | null> {
 
 export async function loginAPI(email: string, password: string) {
   try {
-    const res = await fetch("/api/login", {
+    const res = await fetch(`${BASE_API}/auth/sign-in`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -139,7 +139,7 @@ export async function createPost(postData: CreatePostData) {
     const auth = authString ? JSON.parse(authString) : null;
     const token = auth?.token;
 
-    const response = await fetch(`${API_URL}/posts`, {
+    const response = await fetch(`${BASE_API}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ export async function deletePost(id: string): Promise<boolean> {
     const auth = authString ? JSON.parse(authString) : null;
     const token = auth?.token;
 
-    const res = await fetch(`${API_URL}/posts/${id}/remove`, {
+    const res = await fetch(`${BASE_API}/posts/${id}/remove`, {
       method: "PATCH",
       headers: {
         "Authorization": "Bearer " + token,

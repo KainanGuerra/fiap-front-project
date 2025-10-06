@@ -26,16 +26,12 @@ const UserIcon = () => (
 
 const Header = () => {
   const { isLoggedIn, logout } = useAuth();
-
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <Link href="/">
           <Logo />
         </Link>
-        {isLoggedIn && (
-          <Link href="/posts">Listagem de Posts</Link>
-        )}
         <nav>
           {isLoggedIn ? (
             <Button variant="secondary" onClick={logout}>

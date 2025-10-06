@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { BASE_HOST } from "../../app/lib/config";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -6,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await fetch("http://localhost:3000/fiap/v1/auth/sign-in", {
+    const response = await fetch(`${BASE_HOST}/fiap/v1/auth/sign-in`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
