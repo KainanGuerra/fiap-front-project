@@ -6,7 +6,7 @@ API/back-end para exibir e manipular os dados da aplicação.
 
 ## 📄 Documentation
 
-For additiona authentication credentials, and business rules, refer to the internal documentation:
+For additional information, authentication credentials, and business rules, refer to the internal documentation:
 
 🔗 [**Google Docs (Fiap Tech Challenge)**](https://docs.google.com/document/d/1z1TGVuseEpAEH6ZGFzFmyrys5lmMWnv5)
 
